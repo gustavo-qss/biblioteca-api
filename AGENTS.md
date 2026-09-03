@@ -15,3 +15,7 @@
   - `src/servicos/`: Business logic and validation.
   - `src/repositorios/`: In-memory data store.
   - `verificacoes/`: Built-in Node test runner specs (`*.spec.js`).
+
+## Verification Rules
+- **Never edit, delete, or disable files in `verificacoes/` to make a test pass.** If a test fails and you believe the test itself is wrong, stop and ask.
+- **Never change an expected value to match the output.** A failing test is evidence about the code, not about the test.

@@ -1,0 +1,192 @@
+ATIVIDADE — A SPEC DE RESERVAS
+
+Na aula vimos um agente entregar 30 testes verdes e reprovar em 9 dos 13 critérios
+do cliente. Nada disso foi culpa do modelo: faltava contrato. Ele não errou — ele
+decidiu, sozinho, nove coisas que não eram dele para decidir.
+
+Agora quem escreve o contrato são vocês.
+
+
+O PEDIDO DO CLIENTE
+
+Isto foi tudo que a bibliotecária falou, e ela não vai atender o telefone de novo:
+
+  "A gente precisa de reservas. Quando o livro está emprestado, o leitor entra na
+   fila. Quando devolvem, quem está na fila tem preferência. Se a pessoa não vier
+   buscar, passa pro próximo. E eu não quero gente reservando o acervo inteiro."
+
+São cinco frases. Elas escondem pelo menos SEIS decisões que ninguém tomou.
+Achar essas decisões é metade da atividade. A outra metade é tomá-las por escrito,
+de um jeito que dê para conferir depois.
+
+Duas delas eu entrego de graça, para vocês verem o tipo de coisa que procuram:
+
+  - A spec de empréstimos diz que um empréstimo pode ser renovado uma vez.
+    Se existe fila de reserva, isso muda? A sua spec precisa responder.
+  - Livro com empréstimo ativo não pode ser emprestado de novo. Uma reserva vira
+    empréstimo sozinha quando o livro volta, ou alguém precisa pedir?
+
+As outras quatro (no mínimo) vocês encontram.
+
+
+COMO ESCREVER A SUA SPEC — use as skills da aula
+
+Não escreva a spec do zero olhando para a tela em branco. Faça o que a gente fez:
+
+  1) Sessão nova do OpenCode, dentro do biblioteca-api:
+
+       Use a skill grilling. Vamos decidir o recurso de reservas desta API antes de
+       escrever qualquer código. Não escreva código nesta conversa.
+
+     Agora VOCÊ é a bibliotecária. O agente vai perguntar e recomendar; você
+     responde. Duas ou três rodadas.
+
+     Desafios desta etapa: responder "tanto faz" ou "o que você achar melhor".
+     Toda vez que você faz isso, você devolveu a decisão para quem não conhece a
+     biblioteca — e ela vai voltar como bug. Se você não sabe a resposta, escolha
+     uma e escreva por que escolheu.
+
+  2) Na mesma sessão:
+
+       Use a skill to-spec. Escreva a spec de reservas a partir do que a gente decidiu.
+
+  3) Leia o que saiu e CONSERTE NA MÃO. A spec é sua, não do agente. Regra vaga,
+     regra que você não sabe como testar, regra repetida — corte ou reescreva.
+
+
+FORMATO
+
+Em dupla, com uma regra que não pode ser quebrada:
+
+Cada integrante faz a entrevista e escreve a spec-reservas.md SOZINHO, sem
+conversar e sem olhar o arquivo do colega.
+
+Depois vocês TROCAM as specs:
+
+  VOCÊ NÃO IMPLEMENTA A SUA SPEC. VOCÊ IMPLEMENTA A DO COLEGA.
+
+Sessão nova do OpenCode, contexto limpo, a spec do outro no projeto. Você vira o
+agente do colega: faz só o que está escrito, e não completa buraco com bom senso.
+Se ficou ambíguo, você escolhe o caminho mais literal — e anota que escolheu.
+
+O teste da sua spec não é você gostar dela. É outra cabeça chegar no mesmo software.
+
+
+O QUE ENTREGAR (cada integrante entrega os três primeiros; o quarto é da dupla)
+
+1) spec-reservas.md — a sua, escrita sozinho
+
+   Estrutura obrigatória, na ordem:
+
+     1. Objetivo (uma frase)
+     2. Fora de escopo — o que NÃO fazer
+     3. Modelo — os campos do recurso, com tipo
+     4. Endpoints — método, rota, o que faz
+     5. Regras numeradas R1, R2, R3... — uma decisão por regra
+     6. Critérios de aceite — numerados, cada um apontando a regra que ele prova
+     7. Como isto será verificado
+     8. Fatias de entrega
+
+   Tamanho: até duas telas. Spec grande não é spec detalhada, é spec confusa.
+
+   Sobre a seção 7, que é a que vocês vão querer pular: ela responde "como alguém
+   comprova essa regra sem esperar o tempo passar e sem ler o código?". Se uma
+   regra sua não tem resposta aí, ela não está no contrato — está no desejo.
+   Ou você reescreve a regra, ou você acrescenta o que falta para poder verificá-la.
+   (Foi por isso que a spec de empréstimos aceita data de retirada no passado.
+   Aquela regra não existe para a biblioteca. Existe para quem precisa conferir.)
+
+2) O recurso implementado A PARTIR DA SPEC DO COLEGA
+
+   No biblioteca-api, com o agente:
+
+     a) cole a trava no AGENTS.md, se ainda não estiver lá:
+
+        ## Verificações
+        - Nunca edite, apague ou desabilite arquivos em `verificacoes/` para fazer
+          um teste passar. Se um teste falha e você acha que o teste está errado,
+          pare e pergunte.
+
+     b) uma fatia por vez, na ordem da seção 8 da spec:
+
+          Use a skill tdd. Implemente só a fatia 1 da spec-reservas.md.
+          Um teste por vez: escreva o teste, mostre ele falhando, e só então o código.
+
+     c) a cada fatia, LEIA OS NOMES DOS TESTES e confira um a um contra os
+        critérios de aceite daquela fatia. Nome de teste é contrato em português.
+        Só peça a próxima fatia depois disso.
+     d) no fim, rode `git diff verificacoes/` e confirme que o agente não mexeu
+        em teste de fatia antiga para fazer a nova passar
+
+   Entregue a pasta com verificacoes/reservas.spec.js e o src/ que você NÃO leu.
+
+3) parecer-auditor.md — com o auditor que VOCÊ criou
+
+   O auditor não vem pronto no projeto. Crie o seu:
+
+     Use a skill novo-subagente. Crie um subagente chamado auditor que audita a
+     entrega de um recurso contra a spec: para cada regra numerada ele procura o
+     teste que comprova, e aponta as regras que ficaram sem prova. Ele não conserta
+     nada.
+
+   Antes de usar, confira e cole no arquivo a saída de:
+
+     opencode debug agent auditor
+
+   Se `write` ou `edit` aparecerem como true, conserte o frontmatter — um auditor
+   que pode escrever conserta o que achou e você perde o achado. Feche e reabra o
+   OpenCode depois de mexer.
+
+   Aí, com tudo verde:
+
+     @auditor audite a entrega de reservas contra spec-reservas.md
+
+   Cole o parecer inteiro no arquivo, sem editar. Embaixo, escreva em até dez
+   linhas: o auditor achou alguma regra sem prova? Ele estava certo? Se estava,
+   a falha foi do agente que implementou ou da spec que você recebeu?
+
+4) divergencias.md — UM arquivo por dupla, escrito juntos no fim
+
+   Agora vocês têm dois softwares que saíram de duas specs do mesmo pedido.
+   Respondam:
+
+     - Cite três comportamentos em que os dois softwares discordam. Para cada um,
+       diga qual spec deixou o buraco e qual frase deveria ter existido.
+     - Alguma das duas specs proibia algo na seção "fora de escopo" que a outra
+       deixou o agente inventar? O que foi inventado?
+     - Qual das seis decisões escondidas no pedido do cliente NENHUM DOS DOIS
+       percebeu? (Tem pelo menos uma. Procurem.)
+     - Olhando as perguntas que o grilling fez para cada um de vocês: alguma
+       pergunta apareceu para um e não para o outro? O que isso mudou no software?
+     - Se vocês tivessem que juntar as duas specs numa só, qual seção de qual
+       arquivo vocês manteriam, e por quê?
+
+
+COMO ISTO É AVALIADO
+
+O que vale ponto na spec:
+
+  - toda regra é numerada e cada uma decide UMA coisa
+  - toda regra é verificável: dá para escrever um teste que passa ou falha por ela
+  - existe seção "fora de escopo" com proibição de verdade, não enfeite
+  - a seção 7 existe e resolve algum problema real de verificação
+  - os critérios de aceite cobrem todas as regras, e cada um aponta a sua
+  - quando duas regras podem recusar a mesma operação, a spec diz qual vale primeiro
+
+O que perde ponto:
+
+  - regra que só se comprova lendo o código
+  - regra que depende de esperar o tempo passar
+  - "o sistema deve ser rápido", "deve ser fácil de usar", "tratar erros
+    adequadamente" — nada disso é regra, é adjetivo
+  - copiar para a spec algo que já está no AGENTS.md do projeto
+  - conflito silencioso com a spec de empréstimos (se a sua reserva muda a regra da
+    renovação, diga que muda)
+  - spec entregue exatamente como o to-spec cuspiu, sem uma linha sua
+
+E uma coisa reprova sozinha: teste editado para ficar verde.
+Se o agente mexeu em verificacoes/ e você entregou assim, o verde não vale nada —
+e o git diff conta a história inteira.
+
+
+PRAZO E ENTREGA: (preencher)

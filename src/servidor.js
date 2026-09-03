@@ -2,10 +2,11 @@ import { createServer } from 'node:http';
 import { pathToFileURL } from 'node:url';
 
 import { rotasLivros } from './rotas/livros-rotas.js';
+import { rotasLeitores } from './rotas/leitores-rotas.js';
 import { enviarErro, enviarJson } from './comum/respostas.js';
 import { ErroDominio } from './comum/erros.js';
 
-const rotas = [...rotasLivros];
+const rotas = [...rotasLivros, ...rotasLeitores];
 
 const METODOS_COM_CORPO = new Set(['POST', 'PUT', 'PATCH']);
 

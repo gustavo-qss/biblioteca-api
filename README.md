@@ -31,6 +31,11 @@ npm test
 | POST | `/livros` | cadastra um livro |
 | PUT | `/livros/:id` | substitui os dados de um livro |
 | DELETE | `/livros/:id` | remove um livro |
+| GET | `/leitores` | lista os leitores. Aceita `?nome=` para filtrar |
+| GET | `/leitores/:id` | busca um leitor |
+| POST | `/leitores` | cadastra um leitor |
+| PUT | `/leitores/:id` | substitui os dados de um leitor |
+| DELETE | `/leitores/:id` | remove um leitor |
 
 ## Exemplo
 
@@ -41,6 +46,10 @@ curl -X POST http://localhost:3000/livros \
 
 curl http://localhost:3000/livros
 curl "http://localhost:3000/livros?autor=machado"
+
+curl -X POST http://localhost:3000/leitores \
+  -H "Content-Type: application/json" \
+  -d '{"nome": "Ana Prado", "email": "ana@unifil.br", "anoDeNascimento": 2004}'
 ```
 
 ## Observação

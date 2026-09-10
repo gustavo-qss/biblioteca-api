@@ -39,6 +39,66 @@ E o combinado: **ninguém abre um arquivo de `src/` hoje.** Nem eu.
 
 ---
 
+## Como a aula roda — duas pastas, dois terminais
+
+Nada aqui é branch que você troca durante a aula. São **duas pastas lado a lado**, e a
+turma vê só uma:
+
+```
+flex_ia/
+├── biblioteca-api/   ← branch aula/estado-inicial · o OpenCode abre AQUI · projetado
+└── aula-sdd/         ← branch aula/material-professor · juiz, gabarito, requisitos
+```
+
+O agente enxerga só `biblioteca-api/`. O juiz, o gabarito e o documento de requisitos
+ficam fora do alcance dele — é isso que faz o juiz valer como cliente, e não como cola.
+
+| janela | o que fica nela | projeta? |
+|---|---|---|
+| terminal 1 | OpenCode aberto em `biblioteca-api/` | **sim**, o tempo todo |
+| terminal 2 | shell em `flex_ia/`, para `juiz.sh` e `passo.sh` | **sim**, quando rodar |
+| terceira tela | `requisitos-envolvido-emprestimos.md` · `comandos-da-aula.md` | **nunca** |
+
+Este roteiro é o que você segue; `comandos-da-aula.md` é de onde você copia — celular,
+tablet ou papel. Os dois têm os mesmos comandos, na mesma ordem.
+
+### O `passo.sh` é a rede, não o trilho
+
+```bash
+./aula-sdd/passo.sh <0|1|2|3|4a|4|5>
+```
+
+Ele põe o projeto no estado do **fim** daquele passo, sem prompt e sem gastar token.
+A aula é ao vivo; o `passo.sh` serve para três coisas:
+
+- **antes da aula** — `passo.sh 0` deixa tudo no ponto de partida;
+- **quando o relógio estoura** — cada passo abaixo tem a hora exata de rodar;
+- **para ensaiar** — os sete estados em dez minutos, sem agente e sem cota.
+
+> **Pare o agente (Esc) antes de rodar qualquer `passo.sh`.** Se ele estiver escrevendo
+> ao mesmo tempo, você fica com metade de um estado e metade do outro.
+
+---
+
+## Linha do tempo
+
+Minuto 0 é o começo da aula. A coluna do meio é o que acontece ao vivo; a da direita é
+a hora de cortar, se ainda não fechou.
+
+| minuto | ao vivo | corte |
+|---|---|---|
+| 0–18 | **Passo 1** — o prompt sem spec, o verde, o juiz, as decisões | `passo.sh 1` aos **8** |
+| 18–43 | **Passo 2** — a entrevista · **nunca corte o passo** | `fallbacks/rodadas-grilling.md` aos **36** |
+| 43–51 | **Passo 3** — o `to-spec` escreve a spec | `passo.sh 3` aos **47** |
+| 51–67 | **Passo 4** — TDD: a fatia 1, depois o resto | `passo.sh 4a` aos **60** · `passo.sh 4` aos **65** |
+| 67–85 | **Passo 5** — o auditor | `passo.sh 5` aos **77** |
+| 85–90 | **Passo 6** — fechamento e atividade | — |
+
+Chegou no minuto 51 ainda no Passo 3? Corte o Passo 4 inteiro: `passo.sh 4`, os dois
+placares lado a lado, e siga para o auditor. O Plano B, no fim, dá a ordem dos cortes.
+
+---
+
 ## Preparação do professor
 
 Tudo isto **antes** da aula, na máquina que vai projetar.
@@ -47,17 +107,22 @@ Tudo isto **antes** da aula, na máquina que vai projetar.
 
 ```bash
 cd flex_ia
-./aula-sdd/instalar.sh limpar biblioteca-api
-cd biblioteca-api && npm test
+./aula-sdd/passo.sh 0
 ```
 
-Esperado: **19 testes, 19 passam** (livros + leitores). `src/servicos/` **não pode**
-ter `emprestimos-servico.js` — o Passo 1 é gerar ele ao vivo.
+Um comando resolve os cinco primeiros itens desta lista: tira empréstimos, spec e
+auditor do projeto, lista as skills e mostra os dois placares.
 
-> **A rede:** se a geração ao vivo travar ou demorar demais,
-> `./aula-sdd/instalar.sh passo-1-real biblioteca-api` põe na hora a entrega que o
-> agente já fez neste projeto (30/30 no `npm test`, 4/13 no juiz) e a aula segue igual
-> do 1.2 em diante. Ensaie com ela pelo menos uma vez.
+```
+npm test    pass 19 · fail 0     (livros + leitores)
+juiz        pass 0 · fail 13     (reprova sem quebrar)
+```
+
+`src/servicos/` **não pode** ter `emprestimos-servico.js` — o Passo 1 é gerar ele ao vivo.
+
+> **A rede:** se a geração ao vivo travar ou demorar demais, `./aula-sdd/passo.sh 1` põe
+> na hora a entrega que o agente já fez neste projeto (30/30 no `npm test`, 4/13 no
+> juiz) e a aula segue igual do 1.2 em diante. Ensaie com ela pelo menos uma vez.
 
 ### 2. Confirme o juiz
 
@@ -73,9 +138,8 @@ reprova.
 Confira também o outro placar, para você saber de cor os dois números da aula:
 
 ```bash
-./aula-sdd/instalar.sh passo-1-real biblioteca-api
-./aula-sdd/juiz.sh biblioteca-api          # 4 passam, 9 falham
-./aula-sdd/instalar.sh limpar biblioteca-api
+./aula-sdd/passo.sh 1        # 30/30 no npm test, 4 passam e 9 falham no juiz
+./aula-sdd/passo.sh 0        # e volta para o ponto de partida
 ```
 
 ### 3. Confirme as skills
@@ -140,12 +204,20 @@ tudo o que ela sabe. A nota de uso está no rodapé dele.
 - `aula-sdd/fallbacks/rodadas-grilling.md` — se a entrevista ao vivo travar
 - `aula-sdd/spec-emprestimos.md` — se o `to-spec` sair ruim
 - `aula-sdd/agente/auditor.md` — se o `novo-subagente` sair ruim
-- `./aula-sdd/instalar.sh gabarito biblioteca-api` — se o TDD estourar o tempo
+- `./aula-sdd/passo.sh 4a` e `./aula-sdd/passo.sh 4` — se o TDD estourar o tempo
+
+E ensaie a aula inteira uma vez, sem agente e sem gastar cota — dá dez minutos:
+
+```bash
+for n in 0 1 2 3 4a 4 5; do ./aula-sdd/passo.sh $n; done
+./aula-sdd/passo.sh 0
+```
 
 ---
 
 # Passo 1 — A entrega que passa (18 min)
 
+> **Relógio:** minuto 0–18 · corte aos **8** com `./aula-sdd/passo.sh 1`
 > **Projetar:** terminal com o OpenCode aberto em `biblioteca-api/`.
 
 ## 1.1 O prompt (colar exatamente assim)
@@ -173,8 +245,14 @@ certas, a rota como objeto com regex, o controlador sem `try/catch`, o
 > "As **convenções** ele acerta — vocês entregaram, no `AGENTS.md` e na skill. As
 > **regras** ele vai inventar, porque ninguém entregou."
 
-**Se travar ou passar de 8 minutos:** `./aula-sdd/instalar.sh passo-1-real biblioteca-api`
-em outra aba e siga. A entrega é a mesma; só não foi feita na frente deles.
+⏱ **Aos 8 minutos**, terminando ou não: Esc no agente e, no terminal 2,
+
+```bash
+./aula-sdd/passo.sh 1
+```
+
+A entrega é a mesma (30/30 e 4/13); só não foi feita na frente deles. Diga isso em voz
+alta — a turma precisa saber que o que está na tela é uma rodada real, não um truque.
 
 ## 1.2 O verde
 
@@ -291,6 +369,8 @@ cabeça de uma pessoa. E existe um jeito de tirar de lá.
 
 # Passo 2 — A entrevista (25 min) ← **o coração da aula**
 
+> **Relógio:** minuto 18–43 · a entrevista roda até os **36**, e o passo **não se corta**
+
 ## 2.1 A skill (3 min)
 
 ```bash
@@ -331,7 +411,8 @@ Como conduzir:
 - Ele numera as perguntas e **recomenda** uma resposta em cada. Quando a recomendação
   bate com o documento, responda `"P1 e P3 como você sugeriu; P2 são 14 dias"` e a rodada
   anda em vinte segundos.
-- Duas ou três rodadas bastam. Pare quando a fronteira esvaziar **ou** aos 15 minutos.
+- Duas ou três rodadas bastam. Pare quando a fronteira esvaziar **ou** aos 15 minutos
+  de conversa — o minuto 36 da aula, sem exceção.
 - Se ele começar a escrever código, corte: `pare, ainda estamos decidindo`.
 
 ## 2.3 O momento de ouro (não deixe passar)
@@ -362,11 +443,15 @@ juiz vai reprovar por nome de campo, e aí você diz:
 > existe: a spec é onde a gente **lê** o que foi decidido e vê o que faltou."
 
 **Se travar ao vivo:** `cat aula-sdd/fallbacks/rodadas-grilling.md` e siga a leitura
-como se fosse a saída. O conteúdo é o mesmo.
+como se fosse a saída. O conteúdo é o mesmo. Para projetar só o resumo final das doze
+decisões, `./aula-sdd/passo.sh 2` imprime ele formatado (e não mexe em arquivo nenhum —
+neste passo o produto é a conversa).
 
 ---
 
 # Passo 3 — A conversa vira contrato (8 min)
+
+> **Relógio:** minuto 43–51 · corte aos **47** com `./aula-sdd/passo.sh 3`
 
 ## 3.1 Rode
 
@@ -404,18 +489,33 @@ R7. Devolução em atraso cobra R$ 1,50 por dia inteiro, com teto de R$ 30,00.
 Conte na tela. São mais que nove — porque a entrevista descobre coisa que nem você
 tinha pensado. Essa diferença é o valor do passo.
 
-**Rede:** se a spec sair pobre, `cp aula-sdd/spec-emprestimos.md biblioteca-api/` e siga.
+⏱ **Aos 47 minutos**, ou se a spec sair pobre: `./aula-sdd/passo.sh 3` troca pela spec
+de referência e segue.
 
-> **Antes de sair do Passo 3:** confira se existe uma regra sobre **data de retirada no
-> futuro**. Se a entrevista não cobriu, peça agora:
-> `acrescente uma regra: emprestadoEm no futuro é recusado com 422`.
-> O Passo 5 depende dela.
+**Antes de sair do passo**, duas conferidas de dez segundos cada:
+
+```bash
+grep -c 'emprestadoEm\|devolucaoPrevista\|devolvidoEm' biblioteca-api/spec-emprestimos.md
+```
+
+Zero quer dizer que a entrevista não trouxe o contrato de integração (o caso do 2.4).
+No Passo 4 o juiz vai parar em 3/5 por nome de campo — **isso é conteúdo, não acidente**.
+Se você não quiser essa cena hoje, `passo.sh 3` resolve.
+
+E confira se existe regra sobre **data de retirada no futuro**. Se a entrevista não
+cobriu, peça agora — o Passo 5 depende dela:
+
+```
+acrescente uma regra: emprestadoEm no futuro é recusado com 422
+```
 
 ---
 
 # Passo 4 — Teste primeiro (16 min)
 
-## 4.1 A skill em uma frase
+> **Relógio:** minuto 51–67 · cortes: `passo.sh 4a` aos **60**, `passo.sh 4` aos **65**
+
+## 4.1 A skill em uma frase (1 min)
 
 Abra `.opencode/skills/tdd/SKILL.md` e leia só o título da seção:
 
@@ -426,7 +526,28 @@ E a linha abaixo:
 > *"Se você mudar um teste para ele passar, você trocou o contrato pela sua
 > implementação e o verde virou enfeite."*
 
-## 4.2 Rode (9 min, cronometrado)
+## 4.2 Jogue fora o código do Passo 1 (1 min)
+
+Na frente deles, no terminal 2:
+
+```bash
+cd flex_ia
+./aula-sdd/instalar.sh limpar biblioteca-api
+cd biblioteca-api && npm test        # volta a 19/19
+```
+
+E diga por quê:
+
+> "O código do Passo 1 foi escrito sem contrato, e a suíte dele foi escrita para
+> concordar com ele. Eu não vou pedir remendo — remendo herda a decisão errada. Jogo
+> fora e construo de novo, agora com a spec na mesa.
+> Reparem no que eu **não** apaguei: a spec. Ela não é código, é o que sobrevive ao código."
+
+*(Se você pular isto, o agente encontra os testes do Passo 1 afirmando `7 dias` e
+`dataEmprestimo`, e vai ter que escolher entre a spec e eles — e aí o "não altere teste
+que já existe" do 4.5 perde o sentido.)*
+
+## 4.3 A fatia 1, ao vivo (8 min)
 
 ```
 Use a skill tdd. Implemente só a fatia 1 da spec-emprestimos.md.
@@ -441,9 +562,36 @@ O que observar **em voz alta** enquanto roda:
 - **O nome do teste é a regra?** `it('recusa o quarto empréstimo ativo do mesmo leitor')`
   é legível para o cliente. `it('deve funcionar corretamente')` não é teste, é enfeite.
 
-## 4.3 A armadilha do verde
+⏱ **Aos 60 minutos**, verde ou não: `./aula-sdd/passo.sh 4a`.
 
-Quando a fatia fechar:
+Quando a fatia fechar, quem confere é o cliente — não a suíte dele:
+
+```bash
+cd .. && ./aula-sdd/juiz.sh biblioteca-api "fatia 1"
+```
+
+Esperado: **5 passam, 0 falham**.
+
+> **Se der 3 de 5**, é porque a spec não carregou os nomes de campo (`emprestadoEm`,
+> `devolucaoPrevista`, `devolvidoEm`) — o buraco que você deixou passar de propósito no
+> 2.4. Não conserte correndo: abra a asserção que quebrou e diga
+> *"o app do balcão recebeu a resposta e não achou o campo que ele lê há dois anos"*.
+> Uma pergunta que ninguém fez na entrevista custou cinco casos de aceitação.
+
+## 4.4 As fatias restantes, de uma vez (4 min)
+
+> "Uma fatia a gente fez à mão, teste por teste, para vocês verem o ciclo. As outras
+> quatro ele faz sozinho — e agora eu deixo. O que mudou não foi o modelo: mudou o que
+> ele tem na mão."
+
+```
+Agora implemente as fatias restantes da spec, na ordem, com a mesma skill tdd.
+Não altere nenhum teste que já existe.
+```
+
+⏱ **Aos 65 minutos**: `./aula-sdd/passo.sh 4`.
+
+## 4.5 A armadilha do verde (1 min)
 
 ```bash
 git diff verificacoes/
@@ -454,21 +602,21 @@ git diff verificacoes/
 
 É por isso que o marco no git foi feito antes da aula.
 
-## 4.4 Feche com o gabarito
-
-Aos 9 minutos, com ou sem fatia pronta:
+## 4.6 Feche com o mesmo placar para todos (1 min)
 
 ```bash
-cd flex_ia
-./aula-sdd/instalar.sh gabarito biblioteca-api
-cd biblioteca-api && npm test
-cd .. && ./aula-sdd/juiz.sh biblioteca-api
+cd flex_ia && ./aula-sdd/passo.sh 4
 ```
 
 ```
 npm test → 33 pass / 0 fail
 juiz     → 13 pass / 0 fail
 ```
+
+O Passo 5 audita a **entrega de referência**, para o achado da auditoria ser o mesmo em
+toda turma. Se o ao vivo fechou 13/13 e você prefere auditar a entrega dele, pode
+seguir — mas aí o `SEM PROVA` da R10 deixa de ser garantido: se o agente escreveu um
+teste para a data no futuro, o auditor não vai ter o que achar, e o 5.6 perde o remate.
 
 Lado a lado com o Passo 1, na lousa:
 
@@ -483,6 +631,8 @@ com spec:   npm test 33/33   ·   juiz 13/13
 ---
 
 # Passo 5 — O auditor (18 min)
+
+> **Relógio:** minuto 67–85 · corte aos **77** com `./aula-sdd/passo.sh 5`
 
 ## 5.1 A pergunta que sobrou (2 min)
 
@@ -507,7 +657,7 @@ opencode debug skill | grep novo-subagente
 > mesma ideia aplicada a **criar um agente**. O fluxo é o mesmo da aula inteira: em vez
 > de eu escrever o agente na mão, eu escrevo as regras de como se escreve um agente."
 
-## 5.3 Rode (6 min)
+## 5.3 Rode (6 min) — ⏱ corte aos 77 com `./aula-sdd/passo.sh 5`
 
 ```
 Use a skill novo-subagente. Crie um subagente chamado auditor que audita a entrega
@@ -588,6 +738,11 @@ de retirada no futuro. Ela está implementada, o `npm test` está verde, o juiz 
 `liste todas as regras R1..Rn e o arquivo:linha do teste que comprova cada uma`.
 Com a matriz na tela, a lacuna aparece sozinha.
 
+**Se o auditor não rodar** (cota, rede, tempo): `./aula-sdd/passo.sh 5` imprime a
+rastreabilidade regra a regra e a R10 marcada como `SEM PROVA`. Diga o que ela é —
+um `grep` por nome de teste, não o parecer — e faça a pergunta do mesmo jeito. O
+argumento é a lacuna, não quem a encontrou.
+
 ---
 
 # Passo 6 — Fechamento e atividade (5 min)
@@ -623,6 +778,14 @@ Diga só o essencial e deixe o resto para o Classroom:
 > **trocam**: cada um implementa a spec do colega, sem poder perguntar nada. O teste da
 > sua spec não é você gostar dela — é outra cabeça chegar no mesmo software."
 
+## 6.4 Depois que todo mundo sair
+
+```bash
+cd flex_ia && ./aula-sdd/passo.sh 0
+```
+
+Volta para 19/19 e 0/13, sem spec e sem auditor — pronto para a próxima turma.
+
 ---
 
 ## Checklist de fechamento
@@ -640,13 +803,15 @@ Diga só o essencial e deixe o resto para o Classroom:
 
 O relógio: 18 + 25 + 8 + 16 + 18 + 5 = 90. Corte nesta ordem, e só nesta:
 
-1. **A geração ao vivo do Passo 1** (−6 min) — instale `passo-1-real` antes da aula e
-   comece direto no 1.2, dizendo que o prompt do 1.1 foi rodado ontem. Perde-se ver o
-   agente trabalhando; não se perde nada do argumento.
-2. **Passo 4 inteiro** (−14 min) — instale o gabarito, mostre os dois placares lado a
-   lado e siga. O TDD ao vivo é o mais caro e o mais fácil de recontar.
-3. **Passo 3.3** (a conta das regras).
-4. **Passo 1.5** — fique só no `assert.ok(multa > 0)`, corte o hedge das duas rotas.
+1. **A geração ao vivo do Passo 1** (−6 min) — rode `./aula-sdd/passo.sh 1` antes da
+   aula e comece direto no 1.2, dizendo que o prompt do 1.1 foi rodado ontem. Perde-se
+   ver o agente trabalhando; não se perde nada do argumento.
+2. **As fatias restantes do 4.4** (−4 min) — feche a fatia 1 ao vivo e vá direto para
+   `./aula-sdd/passo.sh 4`. Eles já viram o ciclo uma vez; o resto é repetição.
+3. **Passo 4 inteiro** (−14 min) — `./aula-sdd/passo.sh 4`, os dois placares lado a lado,
+   e siga. O TDD ao vivo é o mais caro e o mais fácil de recontar.
+4. **Passo 3.3** (a conta das regras).
+5. **Passo 1.5** — fique só no `assert.ok(multa > 0)`, corte o hedge das duas rotas.
 
 **Nunca corte o Passo 2.** Sem ele a aula vira a mesma demonstração de sempre — "olha o
 agente errando". Com ele, a aula é sobre o que fazer a respeito.

@@ -13,15 +13,25 @@
 # Segundo argumento opcional: a pasta do projeto (padrão: biblioteca-api).
 set -euo pipefail
 
-RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-AULA="$RAIZ/aula-sdd"
+# Estes scripts se localizam sozinhos: a pasta pode ter o nome que for.
+AULA="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+RAIZ="$(cd "$AULA/.." && pwd)"
 PASSO="${1:?uso: ./aula-sdd/passo.sh <0|1|2|3|4a|4|5> [pasta-do-projeto]}"
 PROJETO="${2:-biblioteca-api}"
 DESTINO="$RAIZ/$PROJETO"
 SPEC="$DESTINO/spec-emprestimos.md"
 TESTES="$DESTINO/verificacoes/emprestimos.spec.js"
 
-[ -f "$DESTINO/src/servidor.js" ] || { echo "não achei $DESTINO/src/servidor.js"; exit 1; }
+[ -f "$DESTINO/src/servidor.js" ] || {
+  echo "não achei o projeto: $DESTINO/src/servidor.js não existe"
+  echo
+  echo "  material da aula em:  $AULA"
+  echo "  pastas ao lado dele:"
+  ls -1 "$RAIZ" 2> /dev/null | sed 's/^/    /'
+  echo
+  echo "  uso: ./passo.sh <0|1|2|3|4a|4|5> [pasta-do-projeto]"
+  exit 1
+}
 
 # ── peças do estado ──────────────────────────────────────────────────────────
 
@@ -61,7 +71,7 @@ placar() {
   printf '   juiz              %s\n' "$juiz"
 }
 
-proximo() { printf '\n   próximo: ./aula-sdd/passo.sh %s\n\n' "$1"; }
+proximo() { printf '\n   próximo: %s %s\n\n' "$0" "$1"; }
 
 # ── os passos ────────────────────────────────────────────────────────────────
 
@@ -100,7 +110,7 @@ case "$PASSO" in
     mexe "nenhum arquivo muda neste passo: o produto é a conversa."
     secao "o resumo que o grilling devolve no fim"
     sed -n '/^## Fronteira vazia/,$p' "$AULA/fallbacks/rodadas-grilling.md" | sed '1,2d; s/\*\*//g; /^$/d; s/^/   /'
-    printf '\n   as rodadas completas: aula-sdd/fallbacks/rodadas-grilling.md\n'
+    printf '\n   as rodadas completas: %s\n' "$AULA/fallbacks/rodadas-grilling.md"
     proximo 3
     ;;
 

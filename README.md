@@ -12,8 +12,15 @@ git clone -b aula/material-professor https://github.com/gustavo-qss/biblioteca-a
 cd biblioteca-api && npm test        # 19/19
 ```
 
-Os dois precisam ficar lado a lado, com estes nomes — `instalar.sh` e `juiz.sh`
-resolvem o projeto como irmão da própria pasta.
+Os dois precisam ficar **lado a lado**. O nome desta pasta pode ser qualquer um — os
+scripts se localizam sozinhos —, e o nome do projeto vai como último argumento quando
+não for `biblioteca-api`.
+
+Baixou o ZIP do GitHub em vez de clonar? O ZIP não guarda permissão de execução:
+
+```bash
+chmod +x *.sh
+```
 
 O OpenCode abre em `biblioteca-api/`. Tudo daqui fica fora do alcance dele.
 

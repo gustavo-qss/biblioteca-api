@@ -10,6 +10,28 @@ Todo `$` de fora do projeto roda em `flex_ia/`. Todo `$` de dentro roda em
 
 ---
 
+## Modo demonstração — um script por passo, sem prompt
+
+Para mostrar a aula sem depender do agente, ou ensaiar em dez minutos: o script leva
+o projeto até o **fim** de cada passo e mostra o que apareceria na tela, com
+`npm test` e juiz rodados de verdade.
+
+```bash
+$ ./aula-sdd/passo.sh 0     # antes da aula
+$ ./aula-sdd/passo.sh 1     # a entrega que passa
+$ ./aula-sdd/passo.sh 2     # a entrevista — nenhum arquivo muda; mostra o resumo
+$ ./aula-sdd/passo.sh 3     # a spec
+$ ./aula-sdd/passo.sh 4a    # TDD, só a fatia 1
+$ ./aula-sdd/passo.sh 4     # TDD, as fatias restantes
+$ ./aula-sdd/passo.sh 5     # o auditor
+```
+
+Cada estado é absoluto: dá para pular, voltar e repetir em qualquer ordem. O passo 5
+não mostra o parecer do `@auditor` — isso exige o agente —, mostra a rastreabilidade
+por nome de teste, que já expõe a R10 sem prova.
+
+---
+
 ## 0. Antes da aula
 
 ```bash
@@ -203,6 +225,7 @@ $ npm test
 |---|---|---|
 | base sem empréstimos | 19/19 | 0/13 |
 | `passo-1-real` (prompt sem spec) | 30/30 | 4/13 |
+| `fatia-1` (TDD, só a fatia 1) | 25/25 | 5/13 · `"fatia 1"` 5/5 |
 | `gabarito` | 33/33 | 13/13 |
 
 ## Em outra máquina

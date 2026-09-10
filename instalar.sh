@@ -2,13 +2,14 @@
 # Instala um estado de empréstimos pronto num projeto — rede de segurança da aula.
 #
 #   ./aula-sdd/instalar.sh gabarito biblioteca-api        # implementação correta
-#   ./aula-sdd/instalar.sh demo-a-tipico biblioteca-api   # o "verde enganoso"
+#   ./aula-sdd/instalar.sh passo-1-real biblioteca-api    # o que o prompt sem spec gerou
+#   ./aula-sdd/instalar.sh fatia-1 biblioteca-api         # só a fatia 1, via TDD
 #   ./aula-sdd/instalar.sh limpar biblioteca-api          # volta ao estado sem empréstimos
 set -euo pipefail
 
 RAIZ="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-ORIGEM="${1:?uso: ./aula-sdd/instalar.sh <gabarito|demo-a-tipico|limpar> <pasta-do-projeto>}"
-PROJETO="${2:?uso: ./aula-sdd/instalar.sh <gabarito|demo-a-tipico|limpar> <pasta-do-projeto>}"
+ORIGEM="${1:?uso: ./aula-sdd/instalar.sh <passo-1-real|fatia-1|gabarito|limpar> <pasta-do-projeto>}"
+PROJETO="${2:?uso: ./aula-sdd/instalar.sh <passo-1-real|fatia-1|gabarito|limpar> <pasta-do-projeto>}"
 DESTINO="$RAIZ/$PROJETO"
 
 [ -f "$DESTINO/src/servidor.js" ] || { echo "não achei $DESTINO/src/servidor.js"; exit 1; }

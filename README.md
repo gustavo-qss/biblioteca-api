@@ -22,11 +22,13 @@ O OpenCode abre em `biblioteca-api/`. Tudo daqui fica fora do alcance dele.
 | | |
 |---|---|
 | `comandos-da-aula.md` | **comece por aqui** — todos os comandos e checkpoints em ordem |
+| `passo.sh` | leva o projeto ao fim de cada passo, sem prompt: `0 1 2 3 4a 4 5` |
 | `roteiro-aula-sdd-tdd-subagente.md` | o roteiro completo, com as falas |
 | `requisitos-envolvido-emprestimos.md` | o que você responde na entrevista do Passo 2 — **não projetar** |
 | `juiz.sh` · `juiz/` | a suíte de aceitação do cliente, só HTTP |
 | `instalar.sh` | troca o estado do projeto em um comando |
 | `passo-1-real/` | a entrega que o agente fez sem spec (30/30 no `npm test`, 4/13 no juiz) |
+| `fatia-1/` | só a fatia 1, via TDD (25/25 no `npm test`, 5/5 na fatia 1 do juiz) |
 | `gabarito/` | a implementação correta (33/33 e 13/13) |
 | `spec-emprestimos.md` | rede se o `to-spec` sair ruim |
 | `agente/auditor.md` | rede se o `novo-subagente` sair ruim |
@@ -36,9 +38,10 @@ O OpenCode abre em `biblioteca-api/`. Tudo daqui fica fora do alcance dele.
 ## Comandos
 
 ```bash
+./passo.sh <0|1|2|3|4a|4|5>            # estado pronto do fim de cada passo
 ./juiz.sh biblioteca-api              # todas as fatias
 ./juiz.sh biblioteca-api "fatia 1"    # uma fatia
-./instalar.sh <passo-1-real|gabarito|limpar> biblioteca-api
+./instalar.sh <passo-1-real|fatia-1|gabarito|limpar> biblioteca-api
 ```
 
 *(rodando de `flex_ia/`, use `./aula-sdd/juiz.sh …`)*
